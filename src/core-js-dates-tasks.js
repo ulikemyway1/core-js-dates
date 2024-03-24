@@ -92,8 +92,12 @@ function getNextFriday(date) {
  * 1, 2024 => 31
  * 2, 2024 => 29
  */
-function getCountDaysInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountDaysInMonth(month, year) {
+  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let isLeap = false;
+  if (year % 4 === 0) isLeap = true;
+  if (month === 2 && isLeap) return days[month - 1] + 1;
+  return days[month - 1];
 }
 
 /**
