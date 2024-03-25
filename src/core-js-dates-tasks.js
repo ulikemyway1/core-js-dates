@@ -205,31 +205,31 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-// function getWeekNumberByDate(date) {
-//   const tempDate = new Date(
-//     Date.UTC(
-//       new Date(date).getFullYear(),
-//       new Date(date).getUTCMonth(),
-//       new Date(date).getUTCDate(),
-//       0,
-//       0,
-//       0
-//     )
-//   );
+function getWeekNumberByDate(date) {
+  const tempDate = new Date(
+    Date.UTC(
+      new Date(date).getFullYear(),
+      new Date(date).getUTCMonth(),
+      new Date(date).getUTCDate(),
+      0,
+      0,
+      0
+    )
+  );
 
-//   const startOfYear = new Date(Date.UTC(tempDate.getFullYear(), 0, 1));
-//   const fisrtDay = startOfYear.getUTCDay();
-//   let firstWeekLength;
-//   if (fisrtDay === 0) {
-//     firstWeekLength = 0;
-//   } else {
-//     firstWeekLength = 7 - startOfYear.getUTCDay();
-//   }
-//   startOfYear.setUTCDate(startOfYear.getUTCDate() + firstWeekLength);
-//   const diff = tempDate - startOfYear;
-//   const dayOfYear = Math.floor(diff / (24 * 60 * 60 * 1000));
-//   return Math.ceil((dayOfYear + 1) / 7) + 1;
-// }
+  const startOfYear = new Date(Date.UTC(tempDate.getFullYear(), 0, 1));
+  const fisrtDay = startOfYear.getUTCDay();
+  let firstWeekLength;
+  if (fisrtDay === 0) {
+    firstWeekLength = 0;
+  } else {
+    firstWeekLength = 7 - startOfYear.getUTCDay();
+  }
+  startOfYear.setUTCDate(startOfYear.getUTCDate() + firstWeekLength);
+  const diff = tempDate - startOfYear;
+  const dayOfYear = Math.floor(diff / (24 * 60 * 60 * 1000));
+  return Math.ceil((dayOfYear + 1) / 7) + 1;
+}
 /**
  * Returns the date of the next Friday the 13th from a given date.
  * Friday the 13th is considered an unlucky day in some cultures.
@@ -347,7 +347,7 @@ module.exports = {
   isDateInPeriod,
   formatDate,
   getCountWeekendsInMonth,
-  // getWeekNumberByDate,
+  getWeekNumberByDate,
   getNextFridayThe13th,
   getQuarter,
   getWorkSchedule,
