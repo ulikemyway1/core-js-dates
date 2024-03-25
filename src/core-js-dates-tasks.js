@@ -212,11 +212,20 @@ function getWeekNumberByDate(date) {
 
   const startOfYear = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
 
+  const fisrtDay = startOfYear.getUTCDay();
+  let firstWeekLength;
+  if (fisrtDay === 0) {
+    firstWeekLength = 0;
+  } else {
+    firstWeekLength = 7 - startOfYear.getUTCDay();
+  }
+  startOfYear.setUTCDate(startOfYear.getUTCDate() + firstWeekLength);
+
   const msDiff = tempDate - startOfYear;
 
   const dayOfYear = Math.floor(msDiff / (24 * 60 * 60 * 1000));
 
-  return Math.ceil((dayOfYear + 1) / 7);
+  return Math.ceil(dayOfYear / 7) + 1;
 }
 
 /**
