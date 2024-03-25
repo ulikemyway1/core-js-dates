@@ -227,7 +227,7 @@ function getWeekNumberByDate(date) {
   }
   startOfYear.setUTCDate(startOfYear.getUTCDate() + firstWeekLength);
   const diff = tempDate - startOfYear;
-  const dayOfYear = Math.ceil(diff / (24 * 60 * 60 * 1000));
+  const dayOfYear = Math.floor(diff / (24 * 60 * 60 * 1000));
   return Math.ceil((dayOfYear + 1) / 7) + 1;
 }
 /**
