@@ -47,7 +47,7 @@ function getTime(date) {
  */
 function getDayName(date) {
   const dateObj = new Date(date);
-  const day = dateObj.getDay();
+  const day = dateObj.getUTCDay();
   const days = [
     'Sunday',
     'Monday',
@@ -73,7 +73,7 @@ function getDayName(date) {
  */
 function getNextFriday(date) {
   const ms = date.getTime();
-  const day = date.getDay();
+  const day = date.getUTCDay();
   let numberOfDays = 0;
   if (day === 5) numberOfDays = 7;
   if (day < 5) numberOfDays = 5 - day;
@@ -207,29 +207,18 @@ function getCountWeekendsInMonth(month, year) {
  */
 function getWeekNumberByDate(date) {
   const tempDate = new Date(
-    Date.UTC(
-      new Date(date).getFullYear(),
-      new Date(date).getUTCMonth(),
-      new Date(date).getUTCDate(),
-      0,
-      0,
-      0
-    )
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   );
 
-  const startOfYear = new Date(Date.UTC(tempDate.getFullYear(), 0, 1));
-  const fisrtDay = startOfYear.getUTCDay();
-  let firstWeekLength;
-  if (fisrtDay === 0) {
-    firstWeekLength = 0;
-  } else {
-    firstWeekLength = 7 - startOfYear.getUTCDay();
-  }
-  startOfYear.setUTCDate(startOfYear.getUTCDate() + firstWeekLength);
-  const diff = tempDate - startOfYear;
-  const dayOfYear = Math.floor(diff / (24 * 60 * 60 * 1000));
-  return Math.ceil((dayOfYear + 1) / 7) + 1;
+  const startOfYear = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
+
+  const msDiff = tempDate - startOfYear;
+
+  const dayOfYear = Math.floor(msDiff / (24 * 60 * 60 * 1000));
+
+  return Math.ceil((dayOfYear + 1) / 7);
 }
+
 /**
  * Returns the date of the next Friday the 13th from a given date.
  * Friday the 13th is considered an unlucky day in some cultures.
@@ -287,37 +276,27 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
 function getWorkSchedule(period, countWorkDays, countOffDays) {
-  const startDate = new Date(period.start.split('-').reverse().join('-'));
-  const endDate = new Date(period.end.split('-').reverse().join('-'));
-  const workSchedule = [];
-  let workDays = 0;
-  let offDays = 0;
-  const currentDate = startDate;
-  while (currentDate <= endDate) {
-    if (workDays < countWorkDays) {
-      workSchedule.push(
-        currentDate
-          .toLocaleDateString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })
-          .replace(/\./g, '-')
-      );
-      workDays += 1;
-      if (workDays === countWorkDays) {
-        offDays = 0;
-      }
-    } else if (offDays < countOffDays) {
-      offDays += 1;
-      if (offDays === countOffDays) {
-        workDays = 0;
-      }
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+  const startDate = new Date(
+    `${period.start.split('-').reverse().join('-')}T00:00:00Z`
+  );
+  const endDate = new Date(
+    `${period.end.split('-').reverse().join('-')}T00:00:00Z`
+  );
+  const currentDate = new Date(startDate);
+  const schedule = [];
 
-  return workSchedule;
+  while (currentDate <= endDate) {
+    for (let i = 0; i < countWorkDays; i += 1) {
+      if (currentDate > endDate) break;
+      const day = currentDate.getUTCDate().toString().padStart(2, '0');
+      const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0');
+      const year = currentDate.getUTCFullYear();
+      schedule.push(`${day}-${month}-${year}`);
+      currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+    }
+    currentDate.setUTCDate(currentDate.getUTCDate() + countOffDays);
+  }
+  return schedule;
 }
 
 /**
